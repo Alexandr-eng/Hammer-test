@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Test Interface</h1>
+
+    <h2>Request Authentication Code</h2>
+    <form id="requestAuthCodeForm">
+        <label for="requestPhoneNumber">Phone Number:</label>
+        <input type="text" id="requestPhoneNumber" name="phone_number" required>
+        <input type="submit" value="Request Code">
+    </form>
+
+    <h2>Verify Authentication Code</h2>
+    <form id="verifyAuthCodeForm">
+        <label for="verifyPhoneNumber">Phone Number:</label>
+        <input type="text" id="verifyPhoneNumber" name="phone_number" required>
+        <label for="authCode">Auth Code:</label>
+        <input type="text" id="authCode" name="auth_code" required>
+        <input type="submit" value="Verify Code">
+    </form>
+
+    <script>
+        document.getElementById('requestAuthCodeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var phoneNumber = document.getElementById('requestPhoneNumber').value;
+            fetch('http://localhost:8000/users/request_auth_code/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ phone_number: phoneNumber })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Request Code Response: ' + data.detail);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+
+        document.getElementById('verifyAuthCodeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var phoneNumber = document.getElementById('verifyPhoneNumber').value;
+            var authCode = document.getElementById('authCode').value;
+            fetch('http://localhost:8000/users/verify_auth_code/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ phone_number: phoneNumber, auth_code: authCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Verify Code Response: ' + data.auth_code);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

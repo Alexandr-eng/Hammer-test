@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Interface</title>
+</head>
+<body>
+    <h1>User Interface</h1>
+
+    <h2>Request Auth Code</h2>
+    <form id="requestAuthCodeForm">
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="text" id="phoneNumber" name="phone_number" required>
+        <input type="submit" value="Request Code">
+    </form>
+
+    <h2>Verify Auth Code</h2>
+    <form id="verifyAuthCodeForm">
+        <label for="phoneNumberVerify">Phone Number:</label>
+        <input type="text" id="phoneNumberVerify" name="phone_number" required>
+        <label for="authCode">Auth Code:</label>
+        <input type="text" id="authCode" name="auth_code" required>
+        <input type="submit" value="Verify Code">
+    </form>
+
+    <h2>Your Invite Code</h2>
+    <p id="userInviteCode"></p>
+
+    <h2>Enter Invite Code</h2>
+    <form id="enterInviteCodeForm">
+        <label for="inviteCode">Invite Code:</label>
+        <input type="text" id="inviteCode" name="invite_code" required>
+        <input type="submit" value="Activate Code">
+    </form>
+
+    <h2>Invited Users Count</h2>
+    <p id="invitedUsersCount"></p>
+
+    <script>
+        // Function to fetch the user's invite code
+        function fetchUserInviteCode() {
+            fetch('/users/profile/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('userInviteCode').textContent = data.invite_code;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Function to activate an invite code
+        function activateInviteCode(inviteCode) {
+            fetch('/users/activate_invite_code/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ invite_code: inviteCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Invite Code Activated: ' + data.detail);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Function to fetch the count of invited users
+        function fetchInvitedUsersCount(inviteCode) {
+            fetch('/users/invited_users_count/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('invitedUsersCount').textContent = data.count;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Fetch the user's invite code when the page loads
+        document.addEventListener('DOMContentLoaded', fetchUserInviteCode);
+
+        // Activate invite code when the form is submitted
+        document.getElementById('enterInviteCodeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var inviteCode = document.getElementById('inviteCode').value;
+            activateInviteCode(inviteCode);
+        });
+
+        // Fetch the count of invited users when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchUserInviteCode().then(function(inviteCode) {
+                fetchInvitedUsersCount(inviteCode);
+            });
+        });
+
+        // Event listeners for the original forms
+        document.getElementById('requestAuthCodeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var phoneNumber = document.getElementById('phoneNumber').value;
+            fetch('/users/request_auth_code/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ phone_number: phoneNumber })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Auth Code: ' + data.auth_code);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+
+        document.getElementById('verifyAuthCodeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var phoneNumber = document.getElementById('phoneNumberVerify').value;
+            var authCode = document.getElementById('authCode').value;
+            fetch('/users/verify_auth_code/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ phone_number: phoneNumber, auth_code: authCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Auth Code Verified: ' + data.auth_code);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>User Interface</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <h1>User Interface</h1>-->
+
+<!--    <h2>Request Auth Code</h2>-->
+<!--    <form id="requestAuthCodeForm">-->
+<!--        <label for="phoneNumber">Phone Number:</label>-->
+<!--        <input type="text" id="phoneNumber" name="phone_number" required>-->
+<!--        <input type="submit" value="Request Code">-->
+<!--    </form>-->
+
+<!--    <h2>Verify Auth Code</h2>-->
+<!--    <form id="verifyAuthCodeForm">-->
+<!--        <label for="phoneNumberVerify">Phone Number:</label>-->
+<!--        <input type="text" id="phoneNumberVerify" name="phone_number" required>-->
+<!--        <label for="authCode">Auth Code:</label>-->
+<!--        <input type="text" id="authCode" name="auth_code" required>-->
+<!--        <input type="submit" value="Verify Code">-->
+<!--    </form>-->
+
+<!--    &lt;!&ndash; Add more forms for other views as needed &ndash;&gt;-->
+
+<!--    <script>-->
+<!--        document.getElementById('requestAuthCodeForm').addEventListener('submit', function(event) {-->
+<!--            event.preventDefault();-->
+<!--            var phoneNumber = document.getElementById('phoneNumber').value;-->
+<!--            fetch('/users/request_auth_code/', {-->
+<!--                method: 'POST',-->
+<!--                headers: {-->
+<!--                    'Content-Type': 'application/json'-->
+<!--                },-->
+<!--                body: JSON.stringify({ phone_number: phoneNumber })-->
+<!--            })-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => {-->
+<!--                alert('Auth Code: ' + data.auth_code);-->
+<!--            })-->
+<!--            .catch((error) => {-->
+<!--                console.error('Error:', error);-->
+<!--            });-->
+<!--        });-->
+
+<!--        document.getElementById('verifyAuthCodeForm').addEventListener('submit', function(event) {-->
+<!--            event.preventDefault();-->
+<!--            var phoneNumber = document.getElementById('phoneNumberVerify').value;-->
+<!--            var authCode = document.getElementById('authCode').value;-->
+<!--            fetch('/users/verify_auth_code/', {-->
+<!--                method: 'POST',-->
+<!--                headers: {-->
+<!--                    'Content-Type': 'application/json'-->
+<!--                },-->
+<!--                body: JSON.stringify({ phone_number: phoneNumber, auth_code: authCode })-->
+<!--            })-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => {-->
+<!--                alert('Auth Code Verified: ' + data.auth_code);-->
+<!--            })-->
+<!--            .catch((error) => {-->
+<!--                console.error('Error:', error);-->
+<!--            });-->
+<!--        });-->
+
+<!--        // Add more event listeners for other forms as needed-->
+<!--    </script>-->
+<!--</body>-->
+<!--</html>-->

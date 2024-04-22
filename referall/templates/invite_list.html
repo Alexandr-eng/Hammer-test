@@ -1,0 +1,36 @@
+<!-- referall/templates/referall/invite_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invite List</title>
+</head>
+<body>
+    <h1>Invite List</h1>
+    <ul>
+        {% for invite in invites %}
+            <li>{{ invite.user.username }} invited {{ invite.invited_user.username }} - {{ invite.activated }}</li>
+        {% empty %}
+            <li>No invites yet.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Пользовательский интерфейс</title>
+</head>
+<body>
+    <h1>Пользовательский интерфейс</h1>
+    <h2>Ваши приглашения</h2>
+    <ul>
+        {% for invite in invites %}
+            <li>{{ invite.phone_number }} - {{ invite.activated_invite_code }}</li>
+        {% empty %}
+            <li>Нет приглашений.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
